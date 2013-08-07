@@ -1,3 +1,4 @@
+require 'httparty'
 require 'json'
 require 'yaml'
 require 'erb'
@@ -6,6 +7,21 @@ require 'sinatra/activerecord/rake'
 require 'puppet_community_data/application'
 
 require "bundler/gem_tasks"
+
+def repo_names
+	response = HTTParty.get("http://forgeapi.puppetlabs.com/v2/users/puppetlabs/modules")
+	return nil unless response.success?
+	names = Array.new
+	response.each do |mod|
+		# You may want to just add the field github_repo_name to the forge database instead of doing this next bit...
+		next unless mod["source_url"].include? "github"
+		mod["source_url"].chomp! "/"
+		mod["source_url"].chomp! ".git"
+		name = mod["source_url"][(mod["source_url"].rindex("/")+1)...mod["source_url"].length]
+		names.push "puppetlabs/#{name}"
+	end
+	names
+end
 
 desc "Setup the database connection environment"
 task :environment do
@@ -47,7 +63,7 @@ namespace :job do
       Kernel.exit(true)
     end
 
-    repo_names = ['puppetlabs/hiera','puppetlabs/puppetlabs-stdlib','puppetlabs/facter','puppetlabs/puppet']
+    #repo_names = ['puppetlabs/hiera','puppetlabs/puppetlabs-stdlib','puppetlabs/facter','puppetlabs/puppet']
 
     app = PuppetCommunityData::Application.new
     app.setup_environment
@@ -59,7 +75,7 @@ namespace :job do
   desc "Import pull requests into the DB"
   task :import => :environment do |t|
 
-    repo_names = ['puppetlabs/hiera','puppetlabs/puppetlabs-stdlib','puppetlabs/facter','puppetlabs/puppet']
+    #repo_names = ['puppetlabs/hiera','puppetlabs/puppetlabs-stdlib','puppetlabs/facter','puppetlabs/puppet']
 
     app = PuppetCommunityData::Application.new
     app.setup_environment
