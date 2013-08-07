@@ -18,6 +18,7 @@ def repo_names
 		mod["source_url"].chomp! "/"
 		mod["source_url"].chomp! ".git"
 		name = mod["source_url"][(mod["source_url"].rindex("/")+1)...mod["source_url"].length]
+		puts "#{mod['name']}, #{mod['source_url']}, #{name}"
 		names.push "puppetlabs/#{name}"
 	end
 	names
