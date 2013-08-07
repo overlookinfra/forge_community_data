@@ -17,6 +17,7 @@ def repo_names
 		next unless mod["source_url"].include? "github"
 		mod["source_url"].chomp! "/"
 		mod["source_url"].chomp! ".git"
+		next unless mod["source_url"] =~ /github.com\/puppetlabs\/[a-zA-Z0-9_.-]+$/
 		name = mod["source_url"][(mod["source_url"].rindex("/")+1)...mod["source_url"].length]
 		puts "#{mod['name']}, #{mod['source_url']}, #{name}"
 		names.push "puppetlabs/#{name}"
