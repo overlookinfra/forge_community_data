@@ -75,6 +75,7 @@ module PuppetCommunityData
     # requests from that repository, and if they are not already in
     # the database, it will add them.
     def write_pull_requests_to_database
+    	repositories = Repository.all
       repositories.each do |repo|
         pull_requests = repo.closed_pull_requests(github_api)
         pull_requests.each do |pull_request|

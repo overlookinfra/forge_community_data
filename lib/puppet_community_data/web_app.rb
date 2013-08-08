@@ -1,11 +1,13 @@
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'json'
-
+require 'httparty'
 require 'puppet_community_data/pull_request'
 require 'puppet_community_data/application'
 
 module PuppetCommunityData
+	include HTTParty
+	base_uri "http://forgeapi.puppetlabs.com"
   class WebApp < Sinatra::Base
 
     set :root, File.expand_path('../../../', __FILE__)
@@ -16,26 +18,59 @@ module PuppetCommunityData
     get '/' do
       erb :main
     end
+    
 
-    get '/data/puppet_pulls' do
-      puppet_pulls = PullRequest.where(:repository_owner => 'puppetlabs')
-      pull_requests = Array.new
-      puppet_pulls.each do |pr|
+		get '/data/repositories' do
+			Repository.all.order('module_name ASC').to_json
+		end
+	
+		get '/data/repositories/:name' do
+			Repository.where(:repository_name => params[:name]).to_json
+		end
+	
+		get '/data/puppet_pulls' do
+			puppet_pulls = PullRequest.all
+			pull_requests = Array.new
+			puppet_pulls.each do |pr|
 
-        from_community = "Puppet Labs"
-        from_community = "Community" if pr.from_community
+				from_community = "Puppet Labs"
+				from_community = "Community" if pr.from_community
 
-        merged = "Closed"
-        merged = "Merged" if pr.merged_status
+				merged = "Closed"
+				merged = "Merged" if pr.merged_status
 
-        pull_requests.push(Hash["close_time" => pr.time_closed,
-                                "repo_name" => pr.repository_name,
-                                "ttl" => ((pr.time_closed - pr.time_opened)/86400).to_i,
-                                "merged" => merged,
-                                "community" => from_community])
-      end
+				pull_requests.push(Hash["close_time" => pr.time_closed,
+																"repo_name" => pr.repository.repository_name,
+																"ttl" => ((pr.time_closed - pr.time_opened)/86400).to_i,
+																"merged" => merged,
+																"community" => from_community])
+			end
 
-      pull_requests.to_json
-    end
+			pull_requests.to_json
+		end
+	
+		get '/data/puppet_pulls/:name' do
+			repo = Repository.where(:module_name => params[:name]).first
+			halt 404 unless repo		
+			puppet_pulls = PullRequest.where(:repo_id => repo.id)
+			pull_requests = Array.new
+			puppet_pulls.each do |pr|
+
+				from_community = "Puppet Labs"
+				from_community = "Community" if pr.from_community
+
+				merged = "Closed"
+				merged = "Merged" if pr.merged_status
+
+				pull_requests.push(Hash["close_time" => pr.time_closed,
+																"repo_name" => pr.repository.repository_name,
+																"ttl" => ((pr.time_closed - pr.time_opened)/86400).to_i,
+																"merged" => merged,
+																"community" => from_community])
+			end
+
+			pull_requests.to_json
+		end
+
   end
 end

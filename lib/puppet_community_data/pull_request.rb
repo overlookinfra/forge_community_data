@@ -2,6 +2,7 @@ require 'sinatra/activerecord'
 require 'active_record/base'
 
 class PullRequest < ActiveRecord::Base
+	belongs_to :repository, :foreign_key => "repo_id"
   ##
   # Return a new instance given data from the Github API.
   #
@@ -11,8 +12,7 @@ class PullRequest < ActiveRecord::Base
   # @return [PullRequest]
   def self.from_github(pr_data)
     key_attributes = {
-      :repository_owner    => pr_data["repo_owner"],
-      :repository_name     => pr_data["repo_name"],
+      :repo_id => pr_data["repo_id"],
       :pull_request_number => pr_data["pr_number"],
     }
 

@@ -11,6 +11,10 @@ As mentioned, this application is hosted in [Heroku](https://devcenter.heroku.co
 This project uses Bundler as it is required for Heroku. To install the needed gems simply do:
 
     $ bundle install
+    
+To create the database tables, run:
+
+	$ heroku run bundle exec rake
 
 To populate the database with new information, run:
 
@@ -31,6 +35,31 @@ If the Heroku application is properly configured using the Heroku Scheduler add-
 If you want to run the scheulded Rake task right away, you can do:
 
     $ heroku run bundle exec rake job:import_if_sunday
+    
+## Testing Locally
+
+To set up testing on your localhost, you will need to do a few things. If you have not already done so, install the needed gems:
+
+	$ bundle install
+
+Make sure [PostgreSQL](http://www.postgresql.org/download/) is installed on your computer. Then create the database in the shell:
+
+	$ createdb pull_requests
+	
+Then create the tables for your database:
+	
+	$ bundle exec rake db:migrate
+	
+Then import your data (requires [Personal API Access Token](https://github.com/settings/applications)):
+
+	$ bundle exec rake job:import PCD_GITHUB_OAUTH_TOKEN=<your_token>
+
+Importing may take a while. Then:
+
+	$ foreman start
+
+If all goes well, you will be able to access your app at [http://localhost:5000](http://localhost:5000)
+	
     
 ## Development 
 
