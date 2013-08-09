@@ -32,5 +32,10 @@ function liveFilter(el, filterTerm) {
 </script>
 <div id="sidebar">
   <ul id="navbar-list" class="nav nav-pills nav-stacked nav-justified">
+  	<li<%= module_name == "" ? " class = 'active'" : "" %>><a href='/'>Home</a></li>
+  	<li><input type="text" class="search-query" onkeyup="liveFilter($('#navbar-list'), $(this).val())" placeholder="Filter modules" style="width:150px;"/></li>
+  	<% repositories.each do |repo| %>
+  		<li<%= module_name == repo.module_name ? " class = 'active'" : "" %> value="<%= repo.module_name %>"><a href="/modules/<%= repo.module_name %>"><%= repo.module_name %></a></li>
+  	<% end %>
   </ul>
 </div>

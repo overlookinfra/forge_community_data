@@ -14,6 +14,10 @@ module PuppetCommunityData
 
     # Extend Sinatra with ActiveRecord database connections.
     register Sinatra::ActiveRecordExtension
+    
+    before do
+    	@repositories = Repositories.all.order('module_name ASC')
+    end
 
     get '/' do
       erb :main, :locals => { :module_name => '' }
