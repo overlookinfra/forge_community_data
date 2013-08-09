@@ -14,7 +14,7 @@ This project uses Bundler as it is required for Heroku. To install the needed ge
     
 To create the database tables, run:
 
-	$ heroku run bundle exec rake
+	$ heroku run bundle exec rake db:migrate
 
 To populate the database with new information, run:
 

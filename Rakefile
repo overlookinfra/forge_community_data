@@ -17,10 +17,17 @@ def repo_names
 		next unless mod["source_url"].include? "github"
 		mod["source_url"].chomp! "/"
 		mod["source_url"].chomp! ".git"
+<<<<<<< HEAD
 		next unless mod["source_url"] =~ /github.com\/[a-zA-Z0-9][a-zA-Z0-9-]*\/[a-zA-Z0-9_.-]+$/
 		name = mod["source_url"].sub /(https?:\/\/)?github.com\//, ''
 		puts "#{mod['name']}, #{mod['source_url']}, #{name}"
 		names.push name
+=======
+		next unless mod["source_url"] =~ /github.com\/puppetlabs\/[a-zA-Z0-9_.-]+$/
+		name = mod["source_url"][(mod["source_url"].rindex("/")+1)...mod["source_url"].length]
+		puts "#{mod['name']}, #{mod['source_url']}, #{name}"
+		names.push "puppetlabs/#{name}"
+>>>>>>> aad7ea2cdb19df37a381690f7f9c03213fac64af
 	end
 	names
 end
@@ -64,12 +71,9 @@ namespace :job do
       logger.debug("Data not imported since today is not Sunday")
       Kernel.exit(true)
     end
-
-    #repo_names = ['puppetlabs/hiera','puppetlabs/puppetlabs-stdlib','puppetlabs/facter','puppetlabs/puppet']
-
+    
     app = PuppetCommunityData::Application.new
     app.setup_environment
-    app.generate_repositories(repo_names)
     app.write_pull_requests_to_database
   end
 
@@ -77,11 +81,8 @@ namespace :job do
   desc "Import pull requests into the DB"
   task :import => :environment do |t|
 
-    #repo_names = ['puppetlabs/hiera','puppetlabs/puppetlabs-stdlib','puppetlabs/facter','puppetlabs/puppet']
-
     app = PuppetCommunityData::Application.new
     app.setup_environment
-    #app.generate_repositories(repo_names)
     app.write_pull_requests_to_database
   end
   
