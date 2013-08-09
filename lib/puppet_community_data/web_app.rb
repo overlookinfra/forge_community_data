@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/activerecord'
+
 require 'json'
 require 'httparty'
 require 'puppet_community_data/pull_request'
@@ -45,47 +46,25 @@ module PuppetCommunityData
 		end
 
 		get '/data/puppet_pulls/?' do
-			puppet_pulls = PullRequest.all
-			pull_requests = Array.new
-			puppet_pulls.each do |pr|
-
-				from_community = "Puppet Labs"
-				from_community = "Community" if pr.from_community
-
-				merged = "Closed"
-				merged = "Merged" if pr.merged_status
-
-				pull_requests.push(Hash["close_time" => pr.time_closed,
-																"repo_name" => pr.repository.repository_name,
-																"ttl" => ((pr.time_closed - pr.time_opened)/86400).to_i,
-																"merged" => merged,
-																"community" => from_community])
-			end
-
-			pull_requests.to_json
+			#PullRequest.select("pull_requests.time_closed AS time, " +
+			#										"r.repository_name AS repo, "+
+			#										"date_part('day', age(pull_requests.time_closed, pull_requests.time_opened)) AS ttl, "+
+			#										"date_part('week', pull_requests.time_closed) AS week, "+
+			#										"CASE pull_requests.from_community WHEN true THEN 'Community' ELSE 'Puppet Labs' END AS community, "+
+			#										"CASE pull_requests.merged_status WHEN true THEN 'Merged' ELSE 'Closed' END AS merged")
+			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.repository_name as repository_name")
+								 .joins("join repositories as r on pull_requests.repo_id = r.id")
+								 .load
+								 .to_json
 		end
 
 		get '/data/puppet_pulls/:name' do
 			repo = Repository.where(:module_name => params[:name]).first
 			halt 404 unless repo		
-			puppet_pulls = PullRequest.where(:repo_id => repo.id)
-			pull_requests = Array.new
-			puppet_pulls.each do |pr|
-
-				from_community = "Puppet Labs"
-				from_community = "Community" if pr.from_community
-
-				merged = "Closed"
-				merged = "Merged" if pr.merged_status
-
-				pull_requests.push(Hash["close_time" => pr.time_closed,
-																"repo_name" => pr.repository.repository_name,
-																"ttl" => ((pr.time_closed - pr.time_opened)/86400).to_i,
-																"merged" => merged,
-																"community" => from_community])
-			end
-
-			pull_requests.to_json
+			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.repository_name as repository_name")
+								 .joins("join repositories as r on pull_requests.repo_id = r.id")
+								 .load
+								 .to_json
 		end
 
   end

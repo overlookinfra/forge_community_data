@@ -2,7 +2,7 @@ require 'sinatra/activerecord'
 require 'active_record/base'
 require 'chronic'
 class Repository < ActiveRecord::Base
-	has_many :pull_requests, dependent: :destroy
+	has_many :pull_requests, dependent: :destroy, foreign_key: "repo_id"
   ##
 	# full_name returns the "full name" of the repository which is in the
 	# format of "owner/name"

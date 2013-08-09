@@ -3,16 +3,16 @@
   <title><%= module_name %> Repository Metrics</title>
 </head>
   <script type="text/javascript">
+  		progress = $.Deferred();
       d3.json('/data/puppet_pulls/<%= module_name %>', function(dataset) {
           var dateFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%SZ');
-
           dataset = dataset.map(function(d){
-            return {'time': d3.time.month(dateFormat.parse(d.close_time)),
-                    'repo': d.repo_name,
-                    'ttl': d.ttl,
-                    'week': d3.time.week(dateFormat.parse(d.close_time)),
-                    'community': d.community,
-                    'merged': d.merged};
+            return {'time': d3.time.month(dateFormat.parse(d.time_closed)),
+                    'repo': d.repository_name,
+                    'ttl': (dateFormat.parse(d.time_closed) - dateFormat.parse(d.time_opened))/86400,
+                    'week': d3.time.week(dateFormat.parse(d.time_closed)),
+                    'community': (d.from_community ? "Community" : "Puppet Labs"),
+                    'merged': (d.merged_status ? "Merged" : "Closed")};
                    });
 
           time_domain = d3.extent(dataset, function(d){return d.time;});
@@ -130,7 +130,6 @@
      <div id='per-month'>
        <div class='graphTitleLeft'>Pull Request Resolved Per Month
        </div>
-       
       </div>
       <!--
       <div id='repo-names'>
