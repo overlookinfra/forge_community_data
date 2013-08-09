@@ -38,8 +38,9 @@ namespace :db do
 end
 
 namespace :job do
+
   desc "Import pull requests into the DB if it's Sunday"
-  task :import_if_sunday => :environment do |t|
+  task :import_if_sunday => [:environment, :repositories] do |t|
 
     logger = Logger.new(STDOUT)
 
@@ -55,17 +56,17 @@ namespace :job do
 
 
   desc "Import pull requests into the DB"
-  task :import => :environment do |t|
+  task :import => [:environment, :repositories] do |t|
 
     app = PuppetCommunityData::Application.new
     app.setup_environment
     app.write_pull_requests_to_database
   end
   
+  desc "Import repository data for Puppet Forge modules"
   task :repositories => :environment do |t|
   	response = HTTParty.get("http://forgeapi.puppetlabs.com/v2/users/puppetlabs/modules")
 		return nil unless response.success?
-		names = Array.new
 		response.each do |mod|
 			# You may want to just add the field github_repo_name to the forge database instead of doing this next bit...
 			next unless mod["source_url"].include? "github"
@@ -78,9 +79,6 @@ namespace :job do
 			tmp = name.split "/"
 			
 			Repository.where( :module_name => mod["name"], :repository_owner => tmp[0], :repository_name => tmp[1] ).first_or_create
-			
-			names.push name
 		end
-		names
   end
 end
