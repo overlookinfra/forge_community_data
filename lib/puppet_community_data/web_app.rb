@@ -9,14 +9,14 @@ module PuppetCommunityData
 	include HTTParty
 	base_uri "http://forgeapi.puppetlabs.com"
   class WebApp < Sinatra::Base
-
+		attr_reader :repositories
     set :root, File.expand_path('../../../', __FILE__)
 
     # Extend Sinatra with ActiveRecord database connections.
     register Sinatra::ActiveRecordExtension
     
     before do
-    	@repositories = Repositories.all.order('module_name ASC')
+    	@repositories = Repository.all.order('module_name ASC')
     end
 
     get '/' do

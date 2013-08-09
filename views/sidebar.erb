@@ -1,13 +1,4 @@
-<script type="text/javascript">
-d3.json('/data/repositories', function(dataset) {
-	list_items = "<li"+(("<%= module_name %>" == "") ? " class='active'" : "")+"><a href='/'>Home</a></li>"
-	list_items += "<li><input type=\"text\" class=\"search-query\" onkeyup=\"liveFilter($('#navbar-list'), $(this).val())\" placeholder=\"Filter modules\" style=\"width:150px;\"/></li>"
-	$.each(dataset, function(index, value) {
-		list_items += "<li class=\"filterable"+(("<%= module_name %>" == value["module_name"]) ? " active" : "")+"\" value=\""+value["module_name"]+"\"><a href=\"/modules/"+value["module_name"]+"\">"+value["module_name"]+"</a></li>"
-	});
-	$("#navbar-list").html(list_items)
-});
-</script>
+
 
 <style>
 #sidebar {
@@ -34,7 +25,7 @@ function liveFilter(el, filterTerm) {
   <ul id="navbar-list" class="nav nav-pills nav-stacked nav-justified">
   	<li<%= module_name == "" ? " class = 'active'" : "" %>><a href='/'>Home</a></li>
   	<li><input type="text" class="search-query" onkeyup="liveFilter($('#navbar-list'), $(this).val())" placeholder="Filter modules" style="width:150px;"/></li>
-  	<% repositories.each do |repo| %>
+  	<% @repositories.each do |repo| %>
   		<li<%= module_name == repo.module_name ? " class = 'active'" : "" %> value="<%= repo.module_name %>"><a href="/modules/<%= repo.module_name %>"><%= repo.module_name %></a></li>
   	<% end %>
   </ul>
