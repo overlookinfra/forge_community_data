@@ -8,30 +8,6 @@ require 'puppet_community_data/application'
 
 require "bundler/gem_tasks"
 
-def repo_names
-	response = HTTParty.get("http://forgeapi.puppetlabs.com/v2/users/puppetlabs/modules")
-	return nil unless response.success?
-	names = Array.new
-	response.each do |mod|
-		# You may want to just add the field github_repo_name to the forge database instead of doing this next bit...
-		next unless mod["source_url"].include? "github"
-		mod["source_url"].chomp! "/"
-		mod["source_url"].chomp! ".git"
-<<<<<<< HEAD
-		next unless mod["source_url"] =~ /github.com\/[a-zA-Z0-9][a-zA-Z0-9-]*\/[a-zA-Z0-9_.-]+$/
-		name = mod["source_url"].sub /(https?:\/\/)?github.com\//, ''
-		puts "#{mod['name']}, #{mod['source_url']}, #{name}"
-		names.push name
-=======
-		next unless mod["source_url"] =~ /github.com\/puppetlabs\/[a-zA-Z0-9_.-]+$/
-		name = mod["source_url"][(mod["source_url"].rindex("/")+1)...mod["source_url"].length]
-		puts "#{mod['name']}, #{mod['source_url']}, #{name}"
-		names.push "puppetlabs/#{name}"
->>>>>>> aad7ea2cdb19df37a381690f7f9c03213fac64af
-	end
-	names
-end
-
 desc "Setup the database connection environment"
 task :environment do
   ENV['RACK_ENV'] ||= 'production'
