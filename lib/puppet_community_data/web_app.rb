@@ -16,7 +16,7 @@ module PuppetCommunityData
     register Sinatra::ActiveRecordExtension
 
     get '/' do
-      erb :main
+      erb :main, :locals => { :module_name => '' }
     end
 
 		get '/modules/:name' do
@@ -40,7 +40,7 @@ module PuppetCommunityData
 			Repository.where(:module_name => params[:name]).to_json
 		end
 
-		get '/data/puppet_pulls' do
+		get '/data/puppet_pulls/?' do
 			puppet_pulls = PullRequest.all
 			pull_requests = Array.new
 			puppet_pulls.each do |pr|
