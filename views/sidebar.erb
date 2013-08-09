@@ -1,9 +1,9 @@
 <script type="text/javascript">
 d3.json('/data/repositories', function(dataset) {
 	list_items = "<li><a href='/'>Home</a></li>"
+	list_items += "<li><input type=\"text\" class=\"search-query\" onkeyup=\"liveFilter($('#navbar-list'), $(this).val())\" placeholder=\"Filter modules\" style=\"width:150px;\"/></li>"
 	$.each(dataset, function(index, value) {
-		console.log(value);
-		list_items += "<li><a href='/modules/"+value["module_name"]+"'>"+value["module_name"]+"</a></li>"
+		list_items += "<li class='filterable' value='"+value["module_name"]+"'><a href='/modules/"+value["module_name"]+"'>"+value["module_name"]+"</a></li>"
 	});
 	$("#navbar-list").html(list_items)
 });
@@ -16,6 +16,20 @@ d3.json('/data/repositories', function(dataset) {
 	float:left;
 }
 </style>
+
+<script>
+function liveFilter(el, filterTerm) {
+	console.log("Test");
+	el.find('.filterable').each(function(idx, filterableItem) {
+		var value = $(this).attr("value");
+		if (value.indexOf(filterTerm) !== -1 ) {
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	});
+}
+</script>
 <div id="sidebar">
   <ul id="navbar-list" class="nav nav-pills nav-stacked nav-justified">
   </ul>

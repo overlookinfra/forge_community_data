@@ -27,10 +27,16 @@ module PuppetCommunityData
 		end
 
 		get '/data/repositories' do
-			Repository.all.order('module_name ASC').to_json
+			if params[:query]
+				Repository.where("repository_name like ?", "%#{params[:query]}%").order('module_name ASC').to_json
+			else
+				Repository.all.order('module_name ASC').to_json
+			end
 		end
 	
 		get '/data/repositories/:name' do
+			
+
 			Repository.where(:module_name => params[:name]).to_json
 		end
 
