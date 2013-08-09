@@ -1,9 +1,9 @@
 <head>
   <meta charset="utf-8">
-  <title>Puppet Pull Request Metrics</title>
+  <title><%= module_name %> Repository Metrics</title>
 </head>
   <script type="text/javascript">
-      d3.json('/data/puppet_pulls', function(dataset) {
+      d3.json('/data/puppet_pulls/<%= module_name %>', function(dataset) {
           var dateFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%SZ');
 
           dataset = dataset.map(function(d){
@@ -98,9 +98,9 @@
           weekChart.xAxis().ticks(d3.time.weeks, 6)
                        .tickFormat(d3.time.format("%m/%y"));
 
-          /*var repoChart = dc.barChart("#repo-names")
+          /*var repoChart = dc.rowChart("#repo-names")
             .width(400)
-            .height(200)
+            .height(2000)
             .group(repoGroup)
             .dimension(repoDimension)
             .colors(['#501FAC', '#6742AC', '#7D64AC', '#9487AC']);
@@ -125,7 +125,6 @@
           dc.renderAll();
       });
    </script>
-
 
    <div class="row-fluid">
      <div id='per-month'>

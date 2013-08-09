@@ -1,0 +1,22 @@
+<script type="text/javascript">
+d3.json('/data/repositories', function(dataset) {
+	list_items = "<li><a href='/'>Home</a></li>"
+	$.each(dataset, function(index, value) {
+		console.log(value);
+		list_items += "<li><a href='/modules/"+value["module_name"]+"'>"+value["module_name"]+"</a></li>"
+	});
+	$("#navbar-list").html(list_items)
+});
+</script>
+
+<style>
+#sidebar {
+	padding: 10px;
+	width: 200px;
+	float:left;
+}
+</style>
+<div id="sidebar">
+  <ul id="navbar-list" class="nav nav-pills nav-stacked nav-justified">
+  </ul>
+</div>

@@ -18,16 +18,22 @@ module PuppetCommunityData
     get '/' do
       erb :main
     end
-    
+
+		get '/modules/:name' do
+			repo = Repository.where(:module_name => params[:name]).first
+			halt 404 unless repo	
+			
+			erb :module, locals: { module_name: params[:name], repo_owner: repo.repository_owner, repo_name: repo.repository_name }
+		end
 
 		get '/data/repositories' do
 			Repository.all.order('module_name ASC').to_json
 		end
 	
 		get '/data/repositories/:name' do
-			Repository.where(:repository_name => params[:name]).to_json
+			Repository.where(:module_name => params[:name]).to_json
 		end
-	
+
 		get '/data/puppet_pulls' do
 			puppet_pulls = PullRequest.all
 			pull_requests = Array.new
@@ -48,7 +54,7 @@ module PuppetCommunityData
 
 			pull_requests.to_json
 		end
-	
+
 		get '/data/puppet_pulls/:name' do
 			repo = Repository.where(:module_name => params[:name]).first
 			halt 404 unless repo		
@@ -73,4 +79,5 @@ module PuppetCommunityData
 		end
 
   end
+
 end
