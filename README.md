@@ -2,7 +2,7 @@
 
 The goal of this project is to create a dashboard to monitor how Puppet Labs is doing responding to pull requests and the general state of the open source repositories.
 
-The application is currently being hosted in Heroku and is viewable [here](http://pullrequestmetrics.herokuapp.com/).
+The application is currently being hosted in Heroku and is viewable [here](http://puppet-forge-metrics.herokuapp.com/).
 
 ## Usage
 
