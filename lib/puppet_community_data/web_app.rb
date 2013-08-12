@@ -52,7 +52,7 @@ module PuppetCommunityData
 			#										"date_part('week', pull_requests.time_closed) AS week, "+
 			#										"CASE pull_requests.from_community WHEN true THEN 'Community' ELSE 'Puppet Labs' END AS community, "+
 			#										"CASE pull_requests.merged_status WHEN true THEN 'Merged' ELSE 'Closed' END AS merged")
-			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.repository_name as repository_name")
+			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.module_name as module_name")
 								 .joins("join repositories as r on pull_requests.repo_id = r.id")
 								 .load
 								 .to_json
@@ -61,7 +61,7 @@ module PuppetCommunityData
 		get '/data/puppet_pulls/:name' do
 			repo = Repository.where(:module_name => params[:name]).first
 			halt 404 unless repo		
-			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.repository_name as repository_name")
+			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.module_name as module_name")
 								 .joins("join repositories as r on pull_requests.repo_id = r.id")
 								 .load
 								 .to_json

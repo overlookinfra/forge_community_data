@@ -42,16 +42,37 @@ function percentMergedChart(location, mergeDimension) {
 }
 
 function perRepositoryChart(location, repoDimension) {
+	console.log("repoDimension", repoDimension);
   var repoGroup = repoDimension.group().reduceCount().orderNatural();
-
-  var repoChart = dc.rowChart(location)
-    .width(400)
-    .height(200)
+	console.log("repoGroup", repoGroup);
+	console.log("repoGroup.all()", repoGroup.all());
+	repoList = repoGroup.all().map(function(a){return a.key});
+	console.log("repoList", repoList);
+  var repoChart = dc.barChart(location)
+    .width(1000)
+    .elasticY(true)
+    .height(300)
+    .gap(2)
+    .centerBar(true)
     .group(repoGroup)
     .dimension(repoDimension)
-    .colors(['#501FAC', '#6742AC', '#7D64AC', '#9487AC']);
-
-  repoChart.xAxis().ticks(5);
+    .x(d3.scale.ordinal().domain(repoList))
+    .xUnits(dc.units.ordinal)
+    .margins({top: 10, right: 10, bottom: 110, left: 60});
+    //.colors(['#501FAC', '#6742AC', '#7D64AC', '#9487AC']);
+	
+	console.log("data",repoChart);
+	console.log("data",repoChart.getDataWithinXDomain(repoGroup));
+	
+  //repoChart.xAxis().tickFormat(function(v) { return "" });
+	//repoChart.label(function (v) {return ""});
+	repoChart.renderlet(function(chart){
+		chart.selectAll("g.x text")
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+      .attr("dy", ".15em")
+			.attr('transform', "rotate(-65)");
+	});
 }
 
 function pullRequestsPerWeek(location, weekDimension, weekDomain) {
@@ -71,6 +92,8 @@ function pullRequestsPerWeek(location, weekDimension, weekDomain) {
 
   weekChart.xAxis().ticks(d3.time.weeks, 6)
     .tickFormat(d3.time.format("%m/%y"));
+    
+  console.log("week data",weekChart.getDataWithinXDomain(weekGroup));
 }
 
 function lifetimesPerMonth(location, monthDimension, monthDomain) {
