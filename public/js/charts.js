@@ -46,7 +46,14 @@ function perRepositoryChart(location, repoDimension) {
   var repoGroup = repoDimension.group().reduceCount().orderNatural();
 	console.log("repoGroup", repoGroup);
 	console.log("repoGroup.all()", repoGroup.all());
-	repoList = repoGroup.all().map(function(a){return a.key});
+	repoList = repoGroup.all().sort(function compare(a,b) {
+																		if (a.value > b.value)
+																			 return -1;
+																		if (a.value < b.value)
+																			return 1;
+																		return 0;
+																	})
+																	.map(function(a){return a.key});
 	console.log("repoList", repoList);
   var repoChart = dc.barChart(location)
     .width(1000)
