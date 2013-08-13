@@ -43,36 +43,28 @@ function percentMergedChart(location, mergeDimension) {
 
 function perRepositoryChart(location, repoDimension) {
 	console.log("repoDimension", repoDimension);
+	
   var repoGroup = repoDimension.group().reduceCount().orderNatural();
-	console.log("repoGroup", repoGroup);
-	console.log("repoGroup.all()", repoGroup.all());
-	repoList = repoGroup.all().sort(function compare(a,b) {
-																		if (a.value > b.value)
-																			 return -1;
-																		if (a.value < b.value)
-																			return 1;
-																		return 0;
-																	})
-																	.map(function(a){return a.key});
+	console.log("repoGroup", repoGroup.size());
+	console.log("repoGroup.all()", repoGroup.top(repoGroup.size()));
+	//repoList = repoGroup.top(repoGroup.size()).map(function(a){return a.key});
+	repoList = repoGroup.all().map(function(a){return a.key});
 	console.log("repoList", repoList);
+	
   var repoChart = dc.barChart(location)
     .width(1000)
-    .elasticY(true)
     .height(300)
-    .gap(2)
+    .margins({top: 10, right: 10, bottom: 110, left: 60})
     .centerBar(true)
     .group(repoGroup)
     .dimension(repoDimension)
     .x(d3.scale.ordinal().domain(repoList))
-    .xUnits(dc.units.ordinal)
-    .margins({top: 10, right: 10, bottom: 110, left: 60});
+    .xUnits(dc.units.ordinal);
     //.colors(['#501FAC', '#6742AC', '#7D64AC', '#9487AC']);
 	
 	console.log("data",repoChart);
 	console.log("data",repoChart.getDataWithinXDomain(repoGroup));
-	
-  //repoChart.xAxis().tickFormat(function(v) { return "" });
-	//repoChart.label(function (v) {return ""});
+
 	repoChart.renderlet(function(chart){
 		chart.selectAll("g.x text")
 			.style("text-anchor", "end")
@@ -80,6 +72,7 @@ function perRepositoryChart(location, repoDimension) {
       .attr("dy", ".15em")
 			.attr('transform', "rotate(-65)");
 	});
+	
 }
 
 function pullRequestsPerWeek(location, weekDimension, weekDomain) {
