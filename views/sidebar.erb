@@ -12,6 +12,7 @@
 function liveFilter(el, filterTerm) {
 	console.log("Test");
 	el.find('.filterable').each(function(idx, filterableItem) {
+		console.log("Test"+idx);
 		var value = $(this).attr("value");
 		if (value.indexOf(filterTerm) !== -1 ) {
 			$(this).show();
@@ -26,7 +27,7 @@ function liveFilter(el, filterTerm) {
   	<li<%= module_name == "" ? " class = 'active'" : "" %>><a href='/'>Home</a></li>
   	<li><input type="text" class="search-query" onkeyup="liveFilter($('#navbar-list'), $(this).val())" placeholder="Filter modules" style="width:150px;"/></li>
   	<% @repositories.each do |repo| %>
-  		<li<%= module_name == repo.module_name ? " class = 'active'" : "" %> value="<%= repo.module_name %>"><a href="/modules/<%= repo.module_name %>"><%= repo.module_name %></a></li>
+  		<li class="filterable<%= module_name == repo.module_name ? " active" : "" %>" value="<%= repo.module_name %>"><a href="/modules/<%= repo.module_name %>"><%= repo.module_name %></a></li>
   	<% end %>
   </ul>
 </div>
