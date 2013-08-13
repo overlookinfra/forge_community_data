@@ -42,14 +42,9 @@ function percentMergedChart(location, mergeDimension) {
 }
 
 function perRepositoryChart(location, repoDimension) {
-	console.log("repoDimension", repoDimension);
-	
   var repoGroup = repoDimension.group().reduceCount().orderNatural();
-	console.log("repoGroup", repoGroup.size());
-	console.log("repoGroup.all()", repoGroup.top(repoGroup.size()));
 	//repoList = repoGroup.top(repoGroup.size()).map(function(a){return a.key});
 	repoList = repoGroup.all().map(function(a){return a.key});
-	console.log("repoList", repoList);
 	
   var repoChart = dc.barChart(location)
     .width(1000)
@@ -60,10 +55,6 @@ function perRepositoryChart(location, repoDimension) {
     .dimension(repoDimension)
     .x(d3.scale.ordinal().domain(repoList))
     .xUnits(dc.units.ordinal);
-    //.colors(['#501FAC', '#6742AC', '#7D64AC', '#9487AC']);
-	
-	console.log("data",repoChart);
-	console.log("data",repoChart.getDataWithinXDomain(repoGroup));
 
 	repoChart.renderlet(function(chart){
 		chart.selectAll("g.x text")
