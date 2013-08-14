@@ -43,8 +43,8 @@ function percentMergedChart(location, mergeDimension) {
 
 function perRepositoryChart(location, repoDimension) {
   var repoGroup = repoDimension.group().reduceCount().orderNatural();
-	//repoList = repoGroup.top(repoGroup.size()).map(function(a){return a.key});
-	repoList = repoGroup.all().map(function(a){return a.key});
+	repoList = repoGroup.top(repoGroup.size()).map(function(a){return a.key});
+	//repoList = repoGroup.all().map(function(a){return a.key});
 	
   var repoChart = dc.barChart(location)
     .width(1000)
@@ -62,6 +62,8 @@ function perRepositoryChart(location, repoDimension) {
 			.attr("dx", "-.8em")
       .attr("dy", ".15em")
 			.attr('transform', "rotate(-65)");
+		
+		chart.selectAll('rect.bar').attr('width', 10);
 	});
 	
 }
