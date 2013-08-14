@@ -33,7 +33,7 @@ describe PullRequest do
                          :from_community => false,
                          :closed => true)
       PullRequest.from_github(pr_hash)
-      expect(PullRequest.find_by_sql("select * from pull_requests").length).to eq(1)
+      expect(PullRequest.find_by_sql("select * from pull_requests where id = 1").length).to eq(1)
     end
   end
 end

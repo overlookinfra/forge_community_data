@@ -40,7 +40,9 @@ module PuppetCommunityData
 		end
 	
 		get '/data/repositories/:name' do
-			Repository.where(:module_name => params[:name]).to_json
+			repo = Repository.where(:module_name => params[:name]).first
+			halt 404 unless repo
+			repo.to_json
 		end
 
 		get '/data/puppet_pulls/?' do
@@ -57,8 +59,9 @@ module PuppetCommunityData
 		end
 
 		get '/data/puppet_pulls/:name' do
-			repo = Repository.where(:module_name => params[:name]).first
-			halt 404 unless repo		
+			repo = Repository.where(:module_name => params[:name]).first	
+			halt 404 unless repo
+			
 			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.module_name as module_name")
 								 .joins("join repositories as r on pull_requests.repo_id = r.id")
 								 .load

@@ -15,13 +15,12 @@ class Repository < ActiveRecord::Base
 
 	##
 	# Given a Octokit object, closed_pull_requests will generate a collection
-	# of pull request objects for all closed pull requests in a given
-	# repository
+	# of hashes of data for all closed pull requests on a given repository
 	#
 	# @param [Octokit::Client] github_api is the instance of the GitHub API
 	# needed to read from the repository
 	#
-	# @ return [Array] of hashes containting data that  represents the pull requests
+	# @ return [Array] of hashes containting data that represents the pull requests
 	# for the given repository
 	def closed_pull_requests(github_api)
 		closed_pull_requests = github_api.pull_requests(full_name, 'closed')

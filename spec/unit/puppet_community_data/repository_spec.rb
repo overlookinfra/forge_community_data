@@ -6,7 +6,7 @@ describe Repository do
 
 	CACHE = {}
 
-	let(:opts) { { :repository_name => "puppetlabs-apache", :repository_owner => "puppetlabs", :module_name => "apache"} }
+	#let(:opts) { { :repository_name => "puppetlabs-apache", :repository_owner => "puppetlabs", :module_name => "apache"} }
 
   def closed_puppet_pull_requests
     CACHE[:closed_puppet_pull_requests] ||= read_request_fixture
@@ -18,7 +18,7 @@ describe Repository do
   end
 
 	subject do
-    described_class.new(opts)
+    described_class.new(REPO_OPTS)
   end
   
 	it "creates instances of ActiveRecord::Base objects" do
@@ -37,9 +37,9 @@ describe Repository do
 	end
 	
 	describe "#closed_pull_requests" do
-		context "Repository puppetlabs/puppetlabs-stdlib" do
+		context "Repository puppetlabs/puppetlabs-apache" do
 			let(:github) { PuppetCommunityData::Application.new([]).github_api }
-			let(:repo) { Repository.create(opts) }
+			let(:repo) { Repository.create(REPO_OPTS) }
 			subject do
         github.stub(:pull_requests).with(repo.full_name, 'closed').and_return(closed_puppet_pull_requests)
         github.stub(:organization_member?).and_return(true)

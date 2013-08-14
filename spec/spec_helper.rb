@@ -8,6 +8,25 @@ SPECDIR = dir
 require 'rspec'
 require 'fileutils'
 require 'pathname'
+require 'chronic'
+
+REPO_OPTS =	{ 
+	:repository_name => "puppetlabs-apache", 
+	:repository_owner => "puppetlabs", 
+	:module_name => "apache"
+}
+PR_OPTS = { 
+	:id =>	1,
+	:pull_request_number => 289,
+	:merged_status => true,
+	:time_opened => (Chronic.parse("2013-08-08T11:15:42Z")).to_time,
+	:time_closed => (Chronic.parse("2013-08-08T20:34:07Z")).to_time,
+	:from_community => true,
+	:closed => true,
+	:repo_id => 1
+}
+
+
 
 Pathname.glob("#{dir}/shared_contexts/*.rb") do |file|
   require file.relative_path_from(Pathname.new(dir))
@@ -18,7 +37,7 @@ RSpec.configure do |config|
 
   config.before :all do
     # ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + '/active_record.log')
-    # ActiveRecord::Base.logger.level = 1
+    ActiveRecord::Base.logger.level = 2
     ActiveRecord::Migration.verbose = false
   end
 
