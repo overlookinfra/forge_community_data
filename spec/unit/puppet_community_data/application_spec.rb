@@ -61,7 +61,7 @@ describe PuppetCommunityData::Application do
         expect(subject.github_api.auto_traversal).to eq(true)
       end
     end
-
+=begin
     describe '#generate repositories' do
       let(:names) {['puppetlabs/puppet', 'puppetlabs/facter', 'puppetlabs/hiera']}
       subject{described_class.new([])}
@@ -76,28 +76,23 @@ describe PuppetCommunityData::Application do
         expect(subject.repositories[0].full_name).to eq('puppetlabs/puppet')
       end
     end
-
+=end
     describe '#write_pull_requests_to_database' do
-      let(:full_name) { "puppetlabs/puppetlabs-stdlib" }
 
-      let(:closed_pr_data) do
-        Hash["pr_number" => 1234,
-             "repo_name" => 'puppet-stdlib',
-             "repo_owner" => 'puppetlabs',
+      let(:repo) do
+        repo = Repository.create
+        closed_pr_data = Hash["pr_number" => 1234,
+             "repo_id" => repo.id,
              "merge_status" => false,
              "time_closed" => Time.now,
              "time_opened" => Time.now - 3600]
-      end
-
-      let(:repo) do
-        repo = PuppetCommunityData::Repository.new(full_name)
         repo.stub(:closed_pull_requests).and_return([closed_pr_data])
         repo
       end
 
       before :each do
         subject.stub(:github_api)
-        subject.stub(:repositories).and_return([repo])
+        Repository.stub(:all).and_return([repo])
       end
 
       it "writes the pull request to the database" do
