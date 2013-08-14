@@ -6,7 +6,7 @@ class AddRepositoriesTable < ActiveRecord::Migration
       t.string :repository_owner
     end
     
-    add_column :pull_requests, :repo_id, :integer, { :null => false }
+    add_column :pull_requests, :repo_id, :integer, { :null => false, :default => 0 }
     remove_column :pull_requests, :repository_name
     remove_column :pull_requests, :repository_owner
   end
