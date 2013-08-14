@@ -40,8 +40,6 @@ module PuppetCommunityData
 		end
 	
 		get '/data/repositories/:name' do
-			
-
 			Repository.where(:module_name => params[:name]).to_json
 		end
 
