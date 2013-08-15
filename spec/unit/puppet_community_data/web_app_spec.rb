@@ -133,7 +133,7 @@ describe 'PuppetCommunityData::WebApp' do
 		it_should_reach_page_for route
 		it_should_return_404_for "/data/puppet_pulls/foobar"
 		it_should_return_json_for route
-		it_should_return_json_hash_for route
+		it_should_return_json_array_for route
 		it_should_return_pr_data_for route
 	end
 	
