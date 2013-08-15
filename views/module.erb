@@ -3,61 +3,82 @@
   <title>Puppet Pull Request Metrics</title>
 </head>
 <script type="text/javascript">
- d3.json('/data/puppet_pulls/<%= module_name %>', function(dataset) {
- 			startTime = new Date();
-      var dateFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%SZ');
 
-			//repoList = new Array();
-      dataset = dataset.map(function(d){
-      	//repoList.push(d.repository_name);
-				return {'month': d3.time.month(dateFormat.parse(d.time_closed)),
-								'mod': d.module_name,
-								'ttl': (dateFormat.parse(d.time_closed) - dateFormat.parse(d.time_opened))/86400,
-								'week': d3.time.week(dateFormat.parse(d.time_closed)),
-								'community': (d.from_community ? "Community" : "Puppet Labs"),
-								'merged': (d.merged_status ? "Merged" : "Closed")};
-							 });
-      var monthDomain = d3.extent(dataset, function(d){return d.month;});
-      var weekDomain = d3.extent(dataset, function(d){return d.week;});
-
-      var pull_requests = crossfilter(dataset);
-
-      var monthDimension = pull_requests.dimension(function(d){return d.month;});
-			
-			<% if module_name == ''%>
-      var repoDimension = pull_requests.dimension(function(d){return d.mod;});
-			<% end %>
-      var weekDimension = pull_requests.dimension(function(d){return d.week;});
-
-      var communityDimension = pull_requests.dimension(function(d){return d.community;});
-
-      var mergeDimension = pull_requests.dimension(function(d){return d.merged;});
-
-      monthlyBarChart("#per-month", monthDimension, monthDomain);
-
-      commChart("#community", communityDimension);
-
-      percentMergedChart("#merged", mergeDimension);
-      
-			<% if module_name == '' %>
-      perRepositoryChart("#repo-names", repoDimension);
-			<% end %>
-			
-      pullRequestsPerWeek("#per-week", weekDimension, weekDomain);
-
-      lifetimesPerMonth("#lifetimes", monthDimension, monthDomain);
-
-      dc.renderAll();
-
-      $('#inspectButton1').popover();
-      $('#inspectButton2').popover();
-      $('#inspectButton3').popover();
-      $('#inspectButton4').popover();
-      $('#inspectButton5').popover();
-      $('#inspectButton6').popover();
+var renderFunction = function(dataset) {
+	var startTime = new Date();
+  var dateFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%SZ');
+  var dataset = dataset.map(function(d){
+    return {'month': d3.time.month(dateFormat.parse(d.time_closed)),
+						'mod': d.module_name,
+						'ttl': (dateFormat.parse(d.time_closed) - dateFormat.parse(d.time_opened))/86400,
+						'week': d3.time.week(dateFormat.parse(d.time_closed)),
+						'community': (d.from_community ? "Community" : "Puppet Labs"),
+						'merged': (d.merged_status ? "Merged" : "Closed")};
   });
-</script>
 
+	var monthDomain = d3.extent(dataset, function(d){return d.month;});
+	var weekDomain = d3.extent(dataset, function(d){return d.week;});
+
+	var pull_requests = crossfilter(dataset);
+
+	var monthDimension = pull_requests.dimension(function(d){return d.month;});
+	
+	<% if module_name == ''%>
+	var repoDimension = pull_requests.dimension(function(d){return d.mod;});
+	<% end %>
+	var weekDimension = pull_requests.dimension(function(d){return d.week;});
+
+	var communityDimension = pull_requests.dimension(function(d){return d.community;});
+
+	var mergeDimension = pull_requests.dimension(function(d){return d.merged;});
+
+	monthlyBarChart("#per-month", monthDimension, monthDomain);
+
+	commChart("#community", communityDimension);
+
+	percentMergedChart("#merged", mergeDimension);
+	
+	<% if module_name == '' %>
+	perRepositoryChart("#repo-names", repoDimension);
+	<% end %>
+	
+	pullRequestsPerWeek("#per-week", weekDimension, weekDomain);
+
+	lifetimesPerMonth("#lifetimes", monthDimension, monthDomain);
+
+	dc.renderAll();
+
+	$('#inspectButton1').popover();
+	$('#inspectButton2').popover();
+	$('#inspectButton3').popover();
+	$('#inspectButton4').popover();
+	$('#inspectButton5').popover();
+	$('#inspectButton6').popover();
+}
+
+d3.json("/data/puppet_pulls/<%= module_name %>", renderFunction);
+</script>
+<div class="row-fluid">
+  <div class = 'span2 offset1'>
+    <input style='display:none;' type="text" class="span6" value="2" id="sl1" data-slider-max="4" data-slider-value="-4">
+  </div>
+    <div class = 'span2 offset1'><a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a></div>
+  </div>
+</div>
+<% if module_name == '' %>
+<div class="row-fluid">
+	<div id='repo-names'>
+    <div class='graphTitleRight row-fluid'>
+      <div class = 'span6'>Resolved Pull Requests by Repository</div>
+      <div class = 'span1 offset5'>
+      	<% popoverTitle = "Description"%>
+        <% repoDescription = "A graph of all total resolved pull requests broken down by repository"%>
+        <button type='button' id= 'inspectButton1' class='btn btn-mini btn-default graphInfoButton' data-toggle='popover' data-placement='left' data-content=<%= "\"#{repoDescription}\"" %>data-title=<%= "\"#{popoverTitle}\"" %>)><i class='icon-search'></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<%end%>
 <div class="row-fluid">
   <div id='per-month'>
     <div class='graphTitleLeft row-fluid'>
@@ -112,3 +133,57 @@
   
 </div>
 </body>
+
+<script type="text/javascript">
+  $('#sl1').slider({
+    formater: function(value) {
+    switch(value) {
+    case 0:
+      return "all time";
+    case 1:
+      return "last 2 years";
+    case 2:
+      return "last year";
+    case 3:
+      return "last 6 months";
+    case 4:
+      return "last 3 months";
+    }
+    }
+  })
+  
+  var adjustGraphs = function(){
+      var value = graphSlider.getValue();
+      var startDate = new Date();
+      var dateString;
+      console.log(value);
+      switch(value) {
+        //0 = all time
+        case 0:
+          startDate.setFullYear(2010, 01, 01);
+          break;
+        // 1 = last 2 years
+        case 1:
+          startDate.setFullYear(startDate.getFullYear() - 2);
+          break;
+        // 2 = last year
+        case 2:
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          break;
+        //3 = last 6 months
+        case 3:
+          startDate.setMonth(startDate.getMonth() - 9);
+          break;
+        //4 = last 3 months
+        case 4:
+          startDate.setMonth(startDate.getMonth() - 3);
+          break;
+      }
+      dateString = startDate.format('yyyy-MM-dd');
+      d3.json("/data/puppet_pulls?start=" + dateString, renderFunction);
+    };
+
+ var graphSlider =  $('#sl1').slider()
+         .on('slideStop', adjustGraphs)
+         .data('slider');
+</script>

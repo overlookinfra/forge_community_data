@@ -4,72 +4,8 @@
 </head>
 
 <script type="text/javascript">
- /*d3.json('/data/puppet_pulls/<%= module_name %>', function(dataset) {
-      var dateFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%SZ');
-
-			//repoList = new Array();
-      dataset = dataset.map(function(d){
-      	//repoList.push(d.repository_name);
-				return {'month': d3.time.month(dateFormat.parse(d.time_closed)),
-								'mod': d.module_name,
-								'ttl': (dateFormat.parse(d.time_closed) - dateFormat.parse(d.time_opened))/86400,
-								'week': d3.time.week(dateFormat.parse(d.time_closed)),
-								'community': (d.from_community ? "Community" : "Puppet Labs"),
-								'merged': (d.merged_status ? "Merged" : "Closed")};
-							 });
-			//console.log(dataset)
-      var monthDomain = d3.extent(dataset, function(d){return d.month;});
-      var weekDomain = d3.extent(dataset, function(d){return d.week;});
-
-      var pull_requests = crossfilter(dataset);
-      console.log("pull_requests", pull_requests);
-      var all = pull_requests.groupAll();
-
-      var monthDimension = pull_requests.dimension(function(d){return d.month;});
-			
-      var repoDimension = pull_requests.dimension(function(d){return d.mod;});
-
-      var weekDimension = pull_requests.dimension(function(d){return d.week;});
-
-      var communityDimension = pull_requests.dimension(function(d){return d.community;});
-
-      var mergeDimension = pull_requests.dimension(function(d){return d.merged;});
-
-      monthlyBarChart("#per-month", monthDimension, monthDomain);
-
-      commChart("#community", communityDimension);
-
-      percentMergedChart("#merged", mergeDimension);
-			
-			<% if module_name == '' %>
-      perRepositoryChart("#repo-names", repoDimension);
-			<% end %>
-      pullRequestsPerWeek("#per-week", weekDimension, weekDomain);
-
-      lifetimesPerMonth("#lifetimes", monthDimension, monthDomain);
-
-      dc.renderAll();
-
-      $('#inspectButton1').popover();
-      $('#inspectButton2').popover();
-      $('#inspectButton3').popover();
-      $('#inspectButton4').popover();
-      $('#inspectButton5').popover();
-      $('#inspectButton6').popover();
-  });*/
 </script>
-<div class="row-fluid">
-	<div id='repo-names'>
-    <div class='graphTitleRight row-fluid'>
-      <div class = 'span6'>Resolved Pull Requests by Repository</div>
-      <div class = 'span1 offset5'>
-      	<% popoverTitle = "Description"%>
-        <% repoDescription = "A graph of all total resolved pull requests broken down by repository"%>
-        <button type='button' id= 'inspectButton1' class='btn btn-mini btn-default graphInfoButton' data-toggle='popover' data-placement='left' data-content=<%= "\"#{repoDescription}\"" %>data-title=<%= "\"#{popoverTitle}\"" %>)><i class='icon-search'></i></button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <%= erb :module, :locals => { :module_name => module_name } %>
 
 </body>

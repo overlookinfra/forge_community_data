@@ -53,8 +53,12 @@ module PuppetCommunityData
 
 		# Returns JSON data for all pull requests on all modules
 		get '/data/puppet_pulls/?' do
+			start_date = params[:start]
+      end_date = params[:end]
+      start_date ||= '2011-07-01'
 			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.module_name as module_name")
 								 .joins("join repositories as r on pull_requests.repo_id = r.id")
+								 .where("pull_requests.time_closed > '#{start_date}'")
 								 .load
 								 .to_json
 		end
@@ -64,8 +68,12 @@ module PuppetCommunityData
 			repo = Repository.where(:module_name => params[:name]).first	
 			halt 404 unless repo
 			
+			start_date = params[:start]
+      end_date = params[:end]
+      start_date ||= '2011-07-01'
 			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.module_name as module_name")
 								 .joins("join repositories as r on pull_requests.repo_id = r.id")
+								 .where("pull_requests.time_closed > '#{start_date}'")
 								 .load
 								 .to_json
 		end

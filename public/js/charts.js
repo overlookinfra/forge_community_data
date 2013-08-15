@@ -120,3 +120,4 @@ function lifetimesPerMonth(location, monthDimension, monthDomain) {
 
   lifetimes.valueAccessor(function(p) { return p.value.avg; });
 }
+
