@@ -26,8 +26,9 @@
 
       var monthDimension = pull_requests.dimension(function(d){return d.month;});
 			
+			<% if module_name == ''%>
       var repoDimension = pull_requests.dimension(function(d){return d.mod;});
-
+			<% end %>
       var weekDimension = pull_requests.dimension(function(d){return d.week;});
 
       var communityDimension = pull_requests.dimension(function(d){return d.community;});
