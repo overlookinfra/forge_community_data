@@ -85,8 +85,6 @@ function pullRequestsPerWeek(location, weekDimension, weekDomain) {
 
   weekChart.xAxis().ticks(d3.time.weeks, 6)
     .tickFormat(d3.time.format("%m/%y"));
-    
-  console.log("week data",weekChart.getDataWithinXDomain(weekGroup));
 }
 
 function lifetimesPerMonth(location, monthDimension, monthDomain) {
