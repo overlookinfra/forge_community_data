@@ -15,8 +15,7 @@ REPO_OPTS =	{
 	:repository_owner => "puppetlabs", 
 	:module_name => "apache"
 }
-PR_OPTS = { 
-	:id =>	1,
+PR_OPTS = {
 	:pull_request_number => 289,
 	:merged_status => true,
 	:time_opened => (Chronic.parse("2013-08-08T11:15:42Z")).to_time,

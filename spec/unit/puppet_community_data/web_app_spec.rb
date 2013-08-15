@@ -7,7 +7,23 @@ describe 'PuppetCommunityData::WebApp' do
 	def app
     PuppetCommunityData::WebApp 
   end
+  
+  def expected_repo_hash
+  	expected ={}
+  	REPO_OPTS.each { |k,v| expected[k.to_s] = v }
+  	expected
+  end
 
+  def expected_pr_hash
+		{
+  		"time_closed" => PR_OPTS[:time_closed].utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+  		"time_opened" => PR_OPTS[:time_opened].utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+  		"from_community" => PR_OPTS[:from_community],
+  		"merged_status" => PR_OPTS[:merged_status],
+  		"module_name" => REPO_OPTS[:module_name]
+  	}
+  end
+  
 	before(:each) do
 		Repository.create(REPO_OPTS)
   	PullRequest.create(PR_OPTS)
@@ -50,6 +66,24 @@ describe 'PuppetCommunityData::WebApp' do
 		end
 	end
 	
+	def self.it_should_return_repo_data_for route
+		it "returns repository data" do
+			get route
+			result = JSON.parse(last_response.body)
+			result = result.first if result.is_a? Array
+			result.should include(expected_repo_hash)
+		end
+	end
+	
+	def self.it_should_return_pr_data_for route
+		it "returns pull request data" do
+			get route
+			result = JSON.parse(last_response.body)
+			result = result.first if result.is_a? Array
+			result.should include(expected_pr_hash)
+		end
+	end
+	
 	describe "GET /" do
 		route = "/"
 		
@@ -71,6 +105,7 @@ describe 'PuppetCommunityData::WebApp' do
 		it_should_reach_page_for route
 		it_should_return_json_for route
 		it_should_return_json_array_for route
+		it_should_return_repo_data_for route
 	end
 	
 	describe 'GET /data/repositories/:name' do
@@ -80,6 +115,7 @@ describe 'PuppetCommunityData::WebApp' do
 		it_should_return_404_for "/data/repositories/foobar"
 		it_should_return_json_for route
 		it_should_return_json_hash_for route
+		it_should_return_repo_data_for route
 	end
 	
 	describe 'GET /data/puppet_pulls/?' do
@@ -88,6 +124,7 @@ describe 'PuppetCommunityData::WebApp' do
 		it_should_reach_page_for route
 		it_should_return_json_for route
 		it_should_return_json_array_for route
+		it_should_return_pr_data_for route
 	end
 	
 	describe 'GET /data/puppet_pulls/:name' do
@@ -97,6 +134,7 @@ describe 'PuppetCommunityData::WebApp' do
 		it_should_return_404_for "/data/puppet_pulls/foobar"
 		it_should_return_json_for route
 		it_should_return_json_hash_for route
+		it_should_return_pr_data_for route
 	end
 	
 end
