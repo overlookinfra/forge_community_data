@@ -64,7 +64,7 @@ module PuppetCommunityData
 			
 			PullRequest.select("pull_requests.time_closed as time_closed, pull_requests.time_opened as time_opened, pull_requests.from_community as from_community, pull_requests.merged_status as merged_status, r.module_name as module_name")
 								 .joins("join repositories as r on pull_requests.repo_id = r.id")
-								 .load
+								 .first
 								 .to_json
 		end
 
