@@ -39,6 +39,9 @@ end
 
 namespace :job do
 
+	# First runs the repositories task, then updates the pull_requests table accordingly
+	# so long as it's Sunday. If you don't want heroku updating the pull_requests table every
+	# day (and thus racking up our bill for dyno hours), tell heroku to run this task daily
   desc "Import pull requests into the DB if it's Sunday"
   task :import_if_sunday => [:environment, :repositories] do |t|
 
@@ -54,7 +57,8 @@ namespace :job do
     app.write_pull_requests_to_database
   end
 
-
+	# Like above, but runs whenever you want. Don't have heroku run this every day if you don't
+	# want large bills for lots of dyno hours
   desc "Import pull requests into the DB"
   task :import => [:environment, :repositories] do |t|
 
@@ -63,6 +67,12 @@ namespace :job do
     app.write_pull_requests_to_database
   end
   
+  # Gets all puppet forge modules, and adds their github repo data to the repositories table
+  # (if they aren't already in the table)
+  # Gets repoistory name/ owner login by extracting that from the source url. Note that this 
+  # task will skip over anymodules whose source url doesn't look like this (stuff in parentheses
+  # is optional):
+  # http(s)://github.com/<github_username>/<repository_name>(.git)(/)
   desc "Import repository data for Puppet Forge modules"
   task :repositories => :environment do |t|
   	response = HTTParty.get("http://forgeapi.puppetlabs.com/v2/users/puppetlabs/modules")

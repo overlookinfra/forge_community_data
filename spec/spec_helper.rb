@@ -10,6 +10,11 @@ require 'fileutils'
 require 'pathname'
 require 'chronic'
 
+# During tests, rspec tests against an empty database. If you need to test against actual 
+# data (as in web_app_spec.rb), put 
+# 	Repository.create(REPO_OPTS)
+# 	PullRequest.create(PR_OPTS)
+# in your tests.
 REPO_OPTS =	{ 
 	:repository_name => "puppetlabs-apache", 
 	:repository_owner => "puppetlabs", 
